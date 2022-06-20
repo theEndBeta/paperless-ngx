@@ -34,7 +34,11 @@ initialize() {
 	find .. -not \( -user paperless -and -group paperless \) -exec chown paperless:paperless {} +
 	set -e
 
-	gosu paperless /sbin/docker-prepare.sh
+	if [ $(id -u) == $(id -u paperless) ]; then
+		gosu paperless /sbin/docker-prepare.sh
+	else
+		/sbin/docker-prepare.sh
+	fi
 }
 
 install_languages() {
