@@ -35,9 +35,9 @@ initialize() {
 	set -e
 
 	if [ $(id -u) == $(id -u paperless) ]; then
-		gosu paperless /sbin/docker-prepare.sh
-	else
 		/sbin/docker-prepare.sh
+	else
+		gosu paperless /sbin/docker-prepare.sh
 	fi
 }
 
