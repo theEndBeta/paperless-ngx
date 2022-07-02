@@ -67,7 +67,7 @@ jobs:
         id: set-ghrc-repository
         run: |
           ghcr_name=$(echo "${GITHUB_REPOSITORY}" | awk '{ print tolower($0) }')
-          echo ::set-output name=repository::u${ghcr_name}
+          echo ::set-output name=repository::${ghcr_name}
       -
         name: Checkout
         uses: actions/checkout@v3
