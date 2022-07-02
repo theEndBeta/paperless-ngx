@@ -63,6 +63,12 @@ jobs:
       - ci-frontend
     steps:
       -
+        name: Set gchr repository name
+        id: set-ghrc-repository
+        run: |
+          ghcr_name=$(echo "${GITHUB_REPOSITORY}" | awk '{ print tolower($0) }')
+          echo ":: set-output repository::${ghcr_name}"
+      -
         name: Checkout
         uses: actions/checkout@v3
       -
@@ -108,6 +114,8 @@ jobs:
           echo ::set-output name=jbig2enc-json::${build_json}
 
     outputs:
+
+      ghcr-repository: ${{ steps.set-ghrc-repository.outputs.repository }}
 
       qpdf-json: ${{ steps.qpdf-setup.outputs.qpdf-json }}
 
@@ -161,7 +169,7 @@ jobs:
       dockerfile: ./docker-builders/Dockerfile.pikepdf
       build-json: ${{ needs.prepare-docker-build.outputs.pikepdf-json }}
       build-args: |
-        REPO=${{ github.repository }}
+        REPO=${{ needs.prepare-docker-build.outputs.ghcr-repository }}
         QPDF_VERSION=${{ fromJSON(needs.prepare-docker-build.outputs.qpdf-json).version }}
         PIKEPDF_GIT_TAG=${{ fromJSON(needs.prepare-docker-build.outputs.pikepdf-json).git_tag }}
         PIKEPDF_VERSION=${{ fromJSON(needs.prepare-docker-build.outputs.pikepdf-json).version }}
