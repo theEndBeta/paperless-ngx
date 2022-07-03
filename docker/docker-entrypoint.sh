@@ -49,7 +49,11 @@ initialize() {
 	done
 	set -e
 
-	gosu paperless /sbin/docker-prepare.sh
+	if [ $(id -u) == $(id -u paperless) ]; then
+		/sbin/docker-prepare.sh
+	else
+		gosu paperless /sbin/docker-prepare.sh
+	fi
 }
 
 install_languages() {
