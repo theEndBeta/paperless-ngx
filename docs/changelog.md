@@ -1,5 +1,11 @@
 # Changelog
 
+## paperless-ngx 1.7.2
+
+* No changes
+
+
+
 ## paperless-ngx 1.7.1
 
 ### Features
