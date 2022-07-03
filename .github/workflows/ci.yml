@@ -66,7 +66,7 @@ jobs:
         name: Set gchr repository name
         id: set-ghrc-repository
         run: |
-          ghcr_name=$(echo "${GITHUB_REPOSITORY}" | awk '{ print tolower($0) }')
+          ghcr_name=$(echo "${github.repository}" | awk '{ print tolower($0) }')
           echo ::set-output name=repository::${ghcr_name}
       -
         name: Checkout
@@ -193,7 +193,7 @@ jobs:
         # Only push to Dockerhub from the main repo
         # Otherwise forks would require a Docker Hub account and secrets setup
         run: |
-          if [[ ${{ github.repository }} == "paperless-ngx/paperless-ngx" ]] ; then
+          if [[ ${{ needs.prepare-docker-build.outputs.ghcr-repository }} == "paperless-ngx/paperless-ngx" ]] ; then
             echo ::set-output name=enable::"true"
           else
             echo ::set-output name=enable::"false"
@@ -204,7 +204,7 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: |
-            ghcr.io/${{ github.repository }}
+            ghcr.io/${{ needs.prepare-docker-build.outputs.ghcr-repository }}
             name=paperlessngx/paperless-ngx,enable=${{ steps.docker-hub.outputs.enable }}
           tags: |
             # Tag branches with branch name
@@ -255,11 +255,11 @@ jobs:
           # Get cache layers from this branch, then dev, then main
           # This allows new branches to get at least some cache benefits, generally from dev
           cache-from: |
-            type=registry,ref=ghcr.io/${{ github.repository }}/builder/cache/app:${{ github.ref_name }}
-            type=registry,ref=ghcr.io/${{ github.repository }}/builder/cache/app:dev
-            type=registry,ref=ghcr.io/${{ github.repository }}/builder/cache/app:main
+            type=registry,ref=ghcr.io/${{ needs.prepare-docker-build.outputs.ghcr-repository }}/builder/cache/app:${{ github.ref_name }}
+            type=registry,ref=ghcr.io/${{ needs.prepare-docker-build.outputs.ghcr-repository }}/builder/cache/app:dev
+            type=registry,ref=ghcr.io/${{ needs.prepare-docker-build.outputs.ghcr-repository }}/builder/cache/app:main
           cache-to: |
-            type=registry,mode=max,ref=ghcr.io/${{ github.repository }}/builder/cache/app:${{ github.ref_name }}
+            type=registry,mode=max,ref=ghcr.io/${{ needs.prepare-docker-build.outputs.ghcr-repository }}/builder/cache/app:${{ github.ref_name }}
       -
         name: Inspect image
         run: |
